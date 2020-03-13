@@ -184,18 +184,20 @@ class SwagProcessor(DataProcessor):
         if type == "train" and lines[0][-1] != "label":
             raise ValueError("For training, the input file must contain a label column.")
 
-        examples = [
-            InputExample(
-                example_id=line[2],
-                question=line[5],  # in the swag dataset, the
-                # common beginning of each
-                # choice is stored in "sent2".
-                contexts=[line[4], line[4], line[4], line[4]],
-                endings=[line[7], line[8], line[9], line[10]],
-                label=line[11],
-            )
-            for line in lines[1:]  # we skip the line with the column names
-        ]
+        examples = []
+        for line in lines[1:]:  # we skip the line with the column names
+            try:
+                example = InputExample(
+                        example_id=line[0],
+                        question=line[1],  # in the swag dataset, the
+                        # common beginning of each
+                        # choice is stored in "sent2".
+                        contexts=[line[2], line[2], line[2], line[2]],
+                        endings=[line[3], line[4], line[5], line[6]],
+                        label=line[7],)
+                examples.append(example)
+            except:
+                continue
 
         return examples
 
